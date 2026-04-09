@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Capminds - Smart Appointment Scheduling</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-container" id="app-container">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="toggle-arrow" onclick="toggleSidebar()">
+            <i class="fa-solid fa-angles-right"></i>
+        </div>
+        <a class="sidebar-item active" onclick="switchView('calendar')" id="sidemenu-calendar">
+            <i class="fa-regular fa-calendar"></i>
+            <span>Calendar</span>
+        </a>
+        <a class="sidebar-item" onclick="switchView('dashboard')" id="sidemenu-dashboard">
+            <i class="fa-solid fa-table-cells-large"></i>
+            <span>Dashboard</span>
+        </a>
+    </aside>
+
+    <main>
+        <header>
+            <div class="logo">
+                <div class="logo-diamond">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+                <span>CAPMINDS</span>
+            </div>
+            <div class="book-btn-center">
+                <button class="btn-blue" onclick="openModal()">
+                   <i class="fa-solid fa-plus"></i>
+                      Book Appointment
+                 </button>
+
+            </div>
+        </header>
+
+        <div class="content-area">
+            <!-- Calendar View -->
+            <div id="calendar-view">
+                <div class="calendar-card">
+                    <div class="calendar-nav-bar">
+                        <div class="nav-controls">
+                            <button class="btn-outline" onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                            <div class="date-box">
+                                <i class="fa-regular fa-calendar"></i>
+                                <span id="current-month-display">January 2025</span>
+                            </div>
+                            <button class="btn-outline" onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button class="btn-outline" onclick="goToToday()">Today</button>
+                        </div>
+                        <select id="calendar-zoom" onchange="changeZoomMode(this.value)" class="btn-outline" style="padding: 6px 12px;">
+                            <option value="month">Month View</option>
+                            <option value="week">Week</option>
+                            <option value="day">Day</option>
+                        </select>
+                    </div>
+                    <div class="doctor-name-center">Application Calender</div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <!-- JS renders -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" style="display:none;">
+                <div class="dashboard-container">
+                    <h2 class="dashboard-title">📊 Practice Dashboard</h2>
+                    <div class="dashboard-filters">
+    <div class="input-group">
+        <i class="fa-solid fa-user"></i>
+        <input type="text" id="search-patient" placeholder="Patient name...">
+    </div>
+    <div class="input-group">
+        <i class="fa-solid fa-user-md"></i>
+        <input type="text" id="search-doctor" placeholder="Doctor name...">
+    </div>
+    <div class="input-group">
+    <i class="fa-solid fa-calendar"></i>
+    <input type="date" id="search-date">
+</div>
+    <div class="input-group">
+        <i class="fa-solid fa-clock"></i>
+        <input type="time" id="search-time">
+    </div>
+    
+    <button class="btn-blue" onclick="searchAppointments()">Search</button>
+
+</div>
+
+                    <div class="table-wrapper">
+                       <h3 class="table-heading">Application Details</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Patient</th>
+      <th>Doctor</th>
+      <th>Hospital</th>
+      <th>Specialty</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="appointment-table-body"></tbody>
+</table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal(event)">
+
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+           
+           <h3 id="modal-title">Schedule Appointment</h3>
+           <i class="fa-solid fa-times close-icon" onclick="closeModal()"></i>
+        </div>
+
+         <form id="appointment-form">
+             <input type="hidden" id="appointment-id">
+            <div class="form-grid">
+              <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                    <input type="text" id="form-patient-name" placeholder="Full name" required>
+             </div>
+             <div class="input-group">
+                <i class="fa-solid fa-stethoscope"></i>
+                <select id="form-doctor-name" required>
+                 <option value="">Doctor</option>
+                 <option value="James Marry">James Marry</option>
+                 <option value="Dhivya Rohan">Dhivya Rohan</option>
+               </select>
+             </div>
+             <div class="input-group">
+                 <i class="fa-solid fa-location-dot"></i>
+               <select id="form-hospital-name" required>
+                 <option value="">Hospital</option>
+                 <option value="Salus Center">Salus Center</option>
+                 <option value="Apolo Hospitals">Apolo Hospitals</option>
+               </select>
+              </div>
+               <div class="input-group">
+         <i class="fa-solid fa-user-md"></i>
+        <select id="form-specialty" required>
+            <option value="">Specialty</option>
+            <option value="Dermatology">Dermatology</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Neurology">Neurology</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <i class="fa-solid fa-calendar-alt"></i>
+        <input type="date" id="form-date" required>
+    </div>
+    <div class="input-group">
+        <i class="fa-solid fa-clock"></i>
+        <input type="time" id="form-time" required>
+    </div>
+    <div class="input-group full-width">
+    <i class="fa-solid fa-note-sticky"></i>
+    <textarea id="form-reason" placeholder="Reason / Notes" rows="2"></textarea>
+</div>
+    
+</div>
+         <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-blue">Save</button>
+      </div>
+     </form>
+   </div>
+ </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
